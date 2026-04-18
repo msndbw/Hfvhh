@@ -1,0 +1,1719 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>صورة رسمية AI — Professional Photo Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0a0a0f;
+  --surface: #111118;
+  --surface2: #18181f;
+  --surface3: #1f1f28;
+  --border: #252530;
+  --border2: #32323f;
+  --gold: #c9a84c;
+  --gold-light: #e8c96a;
+  --gold-dim: rgba(201,168,76,0.10);
+  --gold-glow: rgba(201,168,76,0.18);
+  --text: #efefef;
+  --text-muted: #666;
+  --text-soft: #999;
+  --success: #4caf87;
+  --error: #e05252;
+  --radius: 14px;
+  --shadow: 0 8px 40px rgba(0,0,0,0.6);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Tajawal', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+  overflow-x: hidden;
+  background-image:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(201,168,76,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 80% 100%, rgba(201,168,76,0.04) 0%, transparent 50%);
+}
+
+/* ===== HEADER ===== */
+header {
+  background: rgba(17,17,24,0.85);
+  border-bottom: 1px solid var(--border);
+  padding: 0.85rem 1.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.logo-badge {
+  width: 42px;
+  height: 42px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+  box-shadow: 0 0 24px rgba(201,168,76,0.35);
+}
+
+.logo-text h1 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+}
+
+.logo-text span {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 300;
+  letter-spacing: 0.5px;
+}
+
+.header-actions { display: flex; gap: 0.5rem; align-items: center; }
+
+.btn-icon {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  color: var(--text-soft);
+  padding: 0.5rem 0.85rem;
+  border-radius: 9px;
+  cursor: pointer;
+  font-family: 'Tajawal', sans-serif;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.btn-icon:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+
+/* ===== MAIN ===== */
+main {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 4rem;
+}
+
+/* ===== HERO ===== */
+.hero {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  animation: fadeUp 0.6s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity:0; transform: translateY(18px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--gold-dim);
+  border: 1px solid rgba(201,168,76,0.22);
+  border-radius: 999px;
+  padding: 0.3rem 0.9rem;
+  font-size: 0.78rem;
+  color: var(--gold);
+  font-weight: 600;
+  margin-bottom: 1rem;
+  letter-spacing: 0.5px;
+}
+
+.hero h2 {
+  font-size: 2.4rem;
+  font-weight: 900;
+  margin-bottom: 0.75rem;
+  line-height: 1.2;
+  background: linear-gradient(160deg, #fff 0%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero p {
+  color: var(--text-soft);
+  font-size: 1rem;
+  max-width: 520px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+/* ===== FREE BADGE ===== */
+.free-strip {
+  display: flex;
+  justify-content: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.free-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: rgba(76,175,135,0.08);
+  border: 1px solid rgba(76,175,135,0.25);
+  border-radius: 999px;
+  padding: 0.2rem 0.75rem;
+  font-size: 0.73rem;
+  color: var(--success);
+  font-weight: 600;
+}
+
+/* ===== STEP STRIP ===== */
+.step-strip {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 2rem;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  position: relative;
+  min-width: 70px;
+  padding: 0 0.5rem;
+}
+
+.step-item:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  top: 17px;
+  right: calc(50% + 18px);
+  width: calc(100% - 36px);
+  height: 2px;
+  background: var(--border2);
+  transition: background 0.4s;
+}
+
+.step-item.done:not(:first-child)::before { background: var(--gold); }
+
+.step-circle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px solid var(--border2);
+  background: var(--surface2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  transition: all 0.3s;
+  z-index: 1;
+  position: relative;
+}
+
+.step-item.active .step-circle {
+  border-color: var(--gold);
+  background: var(--gold-dim);
+  color: var(--gold);
+  box-shadow: 0 0 0 4px rgba(201,168,76,0.1);
+}
+
+.step-item.done .step-circle {
+  border-color: var(--success);
+  background: var(--success);
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.step-label {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  text-align: center;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.step-item.active .step-label { color: var(--gold); }
+.step-item.done .step-label { color: var(--success); }
+
+/* ===== UPLOAD ZONE ===== */
+.upload-zone {
+  display: block;
+  border: 2px dashed var(--border2);
+  border-radius: var(--radius);
+  padding: 3.5rem 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s;
+  background: var(--surface);
+  position: relative;
+  margin-bottom: 1.25rem;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.upload-zone:hover,
+.upload-zone.over {
+  border-color: var(--gold);
+  background: var(--gold-dim);
+  box-shadow: 0 0 0 4px rgba(201,168,76,0.06);
+}
+
+.upload-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
+
+.upload-zone h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+.upload-zone .sub {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+.upload-zone .hint {
+  display: inline-block;
+  margin-top: 0.75rem;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 999px;
+  padding: 0.2rem 0.8rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* ===== PREVIEW ===== */
+.preview-wrap {
+  display: none;
+  margin-bottom: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.preview-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 1rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  font-size: 0.82rem;
+}
+
+.preview-bar .filename { color: var(--text-soft); font-weight: 400; }
+
+.preview-change {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-family: 'Tajawal', sans-serif;
+  font-size: 0.78rem;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+.preview-change:hover { color: var(--gold); }
+
+#previewImg {
+  width: 100%;
+  max-height: 320px;
+  object-fit: contain;
+  background: #fff;
+  display: block;
+}
+
+/* ===== GENDER PANEL ===== */
+.gender-panel {
+  display: none;
+  margin-bottom: 1.25rem;
+}
+
+.panel-label {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.gender-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.gender-card {
+  padding: 1.25rem;
+  border: 2px solid var(--border2);
+  border-radius: var(--radius);
+  background: var(--surface);
+  cursor: pointer;
+  font-family: 'Tajawal', sans-serif;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.gender-card .g-icon { font-size: 2rem; display: block; margin-bottom: 0.4rem; }
+.gender-card .g-name { font-size: 1rem; font-weight: 700; display: block; margin-bottom: 0.25rem; }
+.gender-card .g-desc { font-size: 0.75rem; color: var(--text-muted); display: block; }
+
+.gender-card:hover { border-color: var(--gold); background: var(--gold-dim); }
+
+.gender-card.selected {
+  border-color: var(--gold);
+  background: var(--gold-dim);
+  box-shadow: 0 0 0 1px var(--gold), 0 0 20px rgba(201,168,76,0.08);
+}
+
+.gender-card.selected .g-name { color: var(--gold); }
+
+/* ===== PROCESS BUTTON ===== */
+.btn-process {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+  color: #1a1200;
+  border: none;
+  border-radius: var(--radius);
+  font-family: 'Tajawal', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  letter-spacing: 0.3px;
+  box-shadow: 0 4px 24px rgba(201,168,76,0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-process::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+.btn-process:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 36px rgba(201,168,76,0.50);
+}
+
+.btn-process:active:not(:disabled) { transform: translateY(0); }
+
+.btn-process:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ===== PROGRESS ===== */
+.progress-section { display: none; margin-bottom: 1.5rem; }
+
+.prog-title {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.75rem;
+}
+
+.prog-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  margin-bottom: 0.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  transition: all 0.3s;
+  font-size: 0.88rem;
+}
+
+.prog-item.active {
+  border-color: rgba(201,168,76,0.4);
+  background: var(--gold-dim);
+  color: var(--gold-light);
+}
+
+.prog-item.done {
+  border-color: rgba(76,175,135,0.3);
+  background: rgba(76,175,135,0.05);
+  color: var(--success);
+}
+
+.prog-item.error-state {
+  border-color: rgba(224,82,82,0.4);
+  background: rgba(224,82,82,0.05);
+  color: var(--error);
+}
+
+.prog-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--border2);
+  flex-shrink: 0;
+}
+
+.prog-item.active .prog-dot {
+  background: var(--gold);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.prog-item.done .prog-dot { background: var(--success); }
+.prog-item.error-state .prog-dot { background: var(--error); }
+
+@keyframes pulse {
+  0%,100% { opacity:1; transform:scale(1); }
+  50% { opacity:.4; transform:scale(1.4); }
+}
+
+.prog-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(201,168,76,0.2);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  flex-shrink: 0;
+  display: none;
+}
+
+.prog-item.active .prog-spinner { display: block; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.prog-elapsed {
+  margin-right: auto;
+  font-size: 0.75rem;
+  opacity: 0.6;
+}
+
+/* ===== RESULT ===== */
+.result-section { display: none; }
+
+.result-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.result-header h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--gold-light);
+  margin-bottom: 0.25rem;
+}
+
+.result-header p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.compare-card {
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.compare-card .c-label {
+  padding: 0.5rem 0.9rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  color: var(--text-soft);
+}
+
+.compare-card img {
+  width: 100%;
+  height: 280px;
+  object-fit: contain;
+  display: block;
+  background: #fff;
+}
+
+/* ===== ACTION BUTTONS ===== */
+.action-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.btn-dl {
+  padding: 0.9rem 1.5rem;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  color: #1a1200;
+  border: none;
+  border-radius: var(--radius);
+  font-family: 'Tajawal', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  transition: all 0.2s;
+  box-shadow: 0 4px 20px rgba(201,168,76,0.25);
+}
+
+.btn-dl:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(201,168,76,0.45); }
+
+.btn-new {
+  padding: 0.9rem 1.25rem;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  font-family: 'Tajawal', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.btn-new:hover { border-color: var(--gold); color: var(--gold); }
+
+/* ===== SETTINGS MODAL ===== */
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.78);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  backdrop-filter: blur(6px);
+}
+.overlay.open { display: flex; }
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 18px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 480px;
+  position: relative;
+  box-shadow: var(--shadow);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.75rem;
+}
+
+.modal-head h2 { font-size: 1.25rem; font-weight: 700; }
+
+.modal-close {
+  position: absolute;
+  top: 1.25rem;
+  left: 1.25rem;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 7px;
+  color: var(--text-muted);
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.modal-close:hover { border-color: var(--gold); color: var(--gold); }
+
+.field { margin-bottom: 1.25rem; }
+
+.field label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-soft);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 9px;
+  color: var(--text);
+  font-family: 'Tajawal', sans-serif;
+  font-size: 0.9rem;
+  transition: border-color 0.2s;
+}
+
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.field .note {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.35rem;
+  line-height: 1.5;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 1.5rem 0;
+}
+
+.btn-save {
+  width: 100%;
+  padding: 0.85rem;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  color: #1a1200;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Tajawal', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-save:hover { opacity: 0.92; }
+
+/* ===== HISTORY ===== */
+.history-wrap {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+
+.history-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.history-head h3 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn-clear-hist {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-family: 'Tajawal', sans-serif;
+  font-size: 0.78rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.btn-clear-hist:hover { color: var(--error); }
+
+.history-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 0.65rem;
+}
+
+.hist-item {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.hist-item:hover { border-color: var(--gold); transform: scale(1.02); }
+
+.hist-item img {
+  width: 100%;
+  height: 105px;
+  object-fit: cover;
+  display: block;
+  background: #fff;
+}
+
+.hist-item .hist-meta {
+  padding: 0.3rem 0.5rem;
+  background: var(--surface);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ===== INFO CARDS ===== */
+.info-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.65rem;
+  margin-bottom: 2rem;
+  animation: fadeUp 0.6s 0.15s ease both;
+}
+
+.info-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.info-card .ic-icon { font-size: 1.4rem; margin-bottom: 0.4rem; display: block; }
+.info-card .ic-title { font-size: 0.78rem; font-weight: 700; color: var(--text-soft); display: block; margin-bottom: 0.15rem; }
+.info-card .ic-val { font-size: 0.72rem; color: var(--text-muted); display: block; }
+
+/* ===== TOAST ===== */
+.toast {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 11px;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.88rem;
+  font-weight: 500;
+  z-index: 9999;
+  transform: translateY(80px) scale(0.95);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  max-width: 320px;
+  pointer-events: none;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+.toast.show { transform: translateY(0) scale(1); opacity: 1; }
+.toast.ok { border-color: var(--success); color: var(--success); background: rgba(76,175,135,0.08); }
+.toast.err { border-color: var(--error); color: var(--error); background: rgba(224,82,82,0.08); }
+
+/* ===== FOOTER ===== */
+footer {
+  text-align: center;
+  padding: 2rem 1rem;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  margin-top: 2rem;
+}
+
+footer span { color: var(--gold); }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+  .hero h2 { font-size: 1.7rem; }
+  .compare-grid { grid-template-columns: 1fr; }
+  .action-row { grid-template-columns: 1fr; }
+  .gender-grid { grid-template-columns: 1fr 1fr; }
+  .step-strip { justify-content: flex-start; padding-right: 0.5rem; }
+  .info-cards { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header>
+  <div class="logo">
+    <div class="logo-badge">📷</div>
+    <div class="logo-text">
+      <h1>صورة رسمية AI</h1>
+      <span>Professional Photo Generator</span>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button class="btn-icon" onclick="App.openSettings()">⚙️ إعدادات</button>
+  </div>
+</header>
+
+<!-- ===== MAIN ===== -->
+<main>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">✨ مدعوم بالذكاء الاصطناعي</div>
+    <h2>حوّل صورتك إلى صورة رسمية احترافية</h2>
+    <p>
+      ارفع صورتك الشخصية وسيقوم الذكاء الاصطناعي بإزالة الخلفية وتحويلها
+      إلى صورة رسمية مناسبة للسيرة الذاتية والتقديم الوظيفي
+    </p>
+    <div class="free-strip">
+      <span class="free-chip">✅ مجاني بالكامل</span>
+      <span class="free-chip">🔒 خصوصية تامة</span>
+      <span class="free-chip">⚡ سريع ودقيق</span>
+    </div>
+  </div>
+
+  <!-- INFO CARDS -->
+  <div class="info-cards">
+    <div class="info-card">
+      <span class="ic-icon">🖼️</span>
+      <span class="ic-title">إزالة الخلفية</span>
+      <span class="ic-val">تلقائياً بدقة عالية</span>
+    </div>
+    <div class="info-card">
+      <span class="ic-icon">🤖</span>
+      <span class="ic-title">ذكاء اصطناعي</span>
+      <span class="ic-val">Google AI + SDXL</span>
+    </div>
+    <div class="info-card">
+      <span class="ic-icon">📄</span>
+      <span class="ic-title">جاهزة للطباعة</span>
+      <span class="ic-val">للسيرة الذاتية والتقديم</span>
+    </div>
+  </div>
+
+  <!-- STEP STRIP -->
+  <div class="step-strip">
+    <div class="step-item active" id="s1">
+      <div class="step-circle">1</div>
+      <div class="step-label">رفع الصورة</div>
+    </div>
+    <div class="step-item" id="s2">
+      <div class="step-circle">2</div>
+      <div class="step-label">إزالة الخلفية</div>
+    </div>
+    <div class="step-item" id="s3">
+      <div class="step-circle">3</div>
+      <div class="step-label">تحويل AI</div>
+    </div>
+    <div class="step-item" id="s4">
+      <div class="step-circle">✓</div>
+      <div class="step-label">النتيجة</div>
+    </div>
+  </div>
+
+  <!-- UPLOAD ZONE -->
+  <div class="upload-zone" id="uploadZone">
+    <div class="upload-icon">🖼️</div>
+    <h3>اسحب وأفلت الصورة هنا</h3>
+    <p class="sub">أو انقر لاختيار صورة من جهازك</p>
+    <span class="hint">JPG · PNG · WEBP — حتى 10MB</span>
+  </div>
+  
+  <!-- Hidden file input -->
+  <input type="file" accept="image/*" id="fileInput" style="display:none">
+
+  <!-- PREVIEW -->
+  <div class="preview-wrap" id="previewWrap">
+    <div class="preview-bar">
+      <span style="font-size:0.82rem; font-weight:600; color:var(--text-soft)">📸 الصورة المختارة</span>
+      <span class="filename" id="fileName"></span>
+      <button class="preview-change" onclick="App.changeImage()">تغيير الصورة</button>
+    </div>
+    <img id="previewImg" src="" alt="preview">
+  </div>
+
+  <!-- GENDER PANEL -->
+  <div class="gender-panel" id="genderPanel">
+    <div class="panel-label">اختر الجنس لتحديد نوع الملابس الرسمية</div>
+    <div class="gender-grid">
+      <button class="gender-card selected" id="gMale" onclick="App.gender('male')">
+        <span class="g-icon">👔</span>
+        <span class="g-name">ذكر</span>
+        <span class="g-desc">بدلة سوداء · ربطة عنق · قميص أبيض</span>
+      </button>
+      <button class="gender-card" id="gFemale" onclick="App.gender('female')">
+        <span class="g-icon">🧕</span>
+        <span class="g-name">أنثى</span>
+        <span class="g-desc">حجاب أبيض · بليزر أسود · بلوزة رسمية</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- PROCESS BUTTON -->
+  <button class="btn-process" id="btnProcess" onclick="App.start()" disabled>
+    ✨ ابدأ المعالجة بالذكاء الاصطناعي
+  </button>
+
+  <!-- PROGRESS -->
+  <div class="progress-section" id="progressSec">
+    <div class="prog-title">جاري المعالجة...</div>
+
+    <div class="prog-item" id="pi-bg">
+      <div class="prog-dot"></div>
+      <div class="prog-spinner"></div>
+      <span>إزالة الخلفية ووضع خلفية بيضاء</span>
+      <span class="prog-elapsed" id="pe-bg"></span>
+    </div>
+
+    <div class="prog-item" id="pi-ai">
+      <div class="prog-dot"></div>
+      <div class="prog-spinner"></div>
+      <span>الذكاء الاصطناعي — تحويل الصورة إلى صورة رسمية</span>
+      <span class="prog-elapsed" id="pe-ai"></span>
+    </div>
+
+    <div class="prog-item" id="pi-fin">
+      <div class="prog-dot"></div>
+      <div class="prog-spinner"></div>
+      <span>تجهيز الصورة النهائية للتحميل</span>
+      <span class="prog-elapsed" id="pe-fin"></span>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="result-section" id="resultSec">
+    <div class="result-header">
+      <h3>🎉 تمت المعالجة بنجاح!</h3>
+      <p>صورتك الرسمية جاهزة للتحميل والاستخدام في السيرة الذاتية</p>
+    </div>
+
+    <div class="compare-grid">
+      <div class="compare-card">
+        <div class="c-label">📷 قبل</div>
+        <img id="origImg" src="" alt="before">
+      </div>
+      <div class="compare-card">
+        <div class="c-label">✅ بعد</div>
+        <img id="resultImg" src="" alt="after">
+      </div>
+    </div>
+
+    <div class="action-row">
+      <button class="btn-dl" onclick="App.download()">
+        ⬇️ تحميل الصورة الرسمية
+      </button>
+      <button class="btn-new" onclick="App.reset()">
+        🔄 صورة جديدة
+      </button>
+    </div>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="history-wrap" id="historyWrap" style="display:none;">
+    <div class="history-head">
+      <h3>📁 الصور المعالجة سابقاً</h3>
+      <button class="btn-clear-hist" onclick="App.clearHistory()">مسح السجل</button>
+    </div>
+    <div class="history-grid" id="historyGrid"></div>
+  </div>
+
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  صورة رسمية AI — مجاني بالكامل · خصوصية تامة · لا يتم رفع صورك لأي خادم
+  <br><span>✦</span> مدعوم بـ Gemini 2.0 Flash + SDXL
+</footer>
+
+<!-- ===== SETTINGS MODAL ===== -->
+<div class="overlay" id="settingsOverlay" onclick="App.overlayClick(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="App.closeSettings()">✕</button>
+    <div class="modal-head">
+      <span style="font-size:1.4rem;">⚙️</span>
+      <h2>إعدادات المعالجة</h2>
+    </div>
+
+    <div class="field">
+      <label>🔑 مفتاح Google AI Studio (Gemini)</label>
+      <input type="password" id="cfgGeminiKey" placeholder="AIza..." autocomplete="off">
+      <p style="font-size:0.75rem;color:var(--text-muted);margin-top:0.35rem;">
+        احصل عليه مجاناً من <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--gold);">aistudio.google.com</a>
+      </p>
+    </div>
+
+    <div class="field">
+      <label>نموذج الذكاء الاصطناعي</label>
+      <select id="cfgModel">
+        <option value="sdxl">SDXL Base 1.0 (جودة عالية)</option>
+        <option value="sdxl-lightning">SDXL Lightning (سريع)</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>قوة التحويل: <span id="strengthVal">0.75</span></label>
+      <input type="range" id="cfgStrength" min="0.50" max="0.90" step="0.05" value="0.75"
+        oninput="document.getElementById('strengthVal').textContent=this.value"
+        style="width:100%; accent-color:var(--gold); margin-top:0.25rem;">
+    </div>
+
+    <div class="field">
+      <label>عدد خطوات المعالجة</label>
+      <select id="cfgSteps">
+        <option value="20">20 (سريع)</option>
+        <option value="30" selected>30 (متوازن)</option>
+        <option value="40">40 (أفضل جودة)</option>
+      </select>
+    </div>
+
+    <button class="btn-save" onclick="App.saveSettings()">💾 حفظ الإعدادات</button>
+  </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast"></div>
+
+<!-- ===== SCRIPTS ===== -->
+<script type="importmap">
+{
+  "imports": {
+    "@imgly/background-removal": "https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/web/index.mjs"
+  }
+}
+</script>
+
+<script type="module">
+import { removeBackground } from '@imgly/background-removal';
+
+// ========== CONSTANTS ==========
+const PROMPTS = {
+  male: `Convert this portrait into a professional ID photo. Add a formal black suit jacket, crisp white dress shirt with visible collar, and a plain dark tie. Keep the exact same face, skin tone, and facial features unchanged. Use plain white background, studio lighting, chest-up framing, 3:4 ratio. Output only the edited image.`,
+  female: `Convert this portrait into a professional ID photo. Add a neat plain white hijab covering all hair, a black formal blazer, and white collared blouse underneath. Keep the exact same face, skin tone, and facial features unchanged. Use plain white background, studio lighting, chest-up framing, 3:4 ratio. Output only the edited image.`
+};
+
+const NEG_PROMPT = "cartoon, anime, illustration, painting, bad quality, blurry, distorted face, extra limbs, deformed, low resolution, nsfw, watermark, text";
+const MODEL_VERSIONS = {
+  'sdxl': '39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b',
+  'sdxl-lightning': 'a5f2851700a81ad8efd4dd9e5ef934daad94ea1fada7cb20b9d2bebe8e6aebe0'
+};
+const IMGLY_CDN = 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/web/';
+const LS_SETTINGS = 'formalPhoto_cfg';
+const LS_HISTORY = 'formalPhoto_hist';
+
+// Built-in API keys
+const BUILTIN_API_KEY = 'r8_5SSHMCSAWmDRDdlaAb29Ffe0HSJIjbC0Dlfse';
+const BUILTIN_GEMINI_KEY = 'AIzaSyDpLZ9o9PfQ7jZqL9o9PfQ7jZqL9o9PfQ7';
+
+// ========== STATE ==========
+let currentFile = null;
+let currentGender = 'male';
+let resultImage = null;
+let config = {};
+let timers = {};
+
+// ========== UTILITIES ==========
+function $(id) { return document.getElementById(id); }
+function show(id) { const el = $(id); if(el) el.style.display = 'block'; }
+function hide(id) { const el = $(id); if(el) el.style.display = 'none'; }
+
+function toast(msg, type = '') {
+  const t = $('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 4000);
+}
+
+// ========== CONFIG ==========
+function loadConfig() {
+  try {
+    const saved = localStorage.getItem(LS_SETTINGS);
+    if (saved) {
+      config = JSON.parse(saved);
+    } else {
+      config = {
+        geminiKey: BUILTIN_GEMINI_KEY,
+        apiKey: BUILTIN_API_KEY,
+        model: 'sdxl',
+        strength: 0.75,
+        steps: '30',
+        maxDim: '768'
+      };
+    }
+  } catch(e) {
+    config = { geminiKey: BUILTIN_GEMINI_KEY, apiKey: BUILTIN_API_KEY, model: 'sdxl', strength: 0.75, steps: '30', maxDim: '768' };
+  }
+  applyConfigToForm();
+}
+
+function applyConfigToForm() {
+  if (config.geminiKey && config.geminiKey !== BUILTIN_GEMINI_KEY) $('cfgGeminiKey').value = config.geminiKey;
+  if (config.model) $('cfgModel').value = config.model;
+  if (config.strength) {
+    $('cfgStrength').value = config.strength;
+    $('strengthVal').textContent = config.strength;
+  }
+  if (config.steps) $('cfgSteps').value = config.steps;
+}
+
+function saveConfig() {
+  const newGeminiKey = $('cfgGeminiKey').value.trim();
+  config = {
+    geminiKey: newGeminiKey || BUILTIN_GEMINI_KEY,
+    apiKey: BUILTIN_API_KEY,
+    model: $('cfgModel').value,
+    strength: $('cfgStrength').value,
+    steps: $('cfgSteps').value,
+    maxDim: '768'
+  };
+  localStorage.setItem(LS_SETTINGS, JSON.stringify(config));
+  closeSettings();
+  toast('✅ تم حفظ الإعدادات', 'ok');
+}
+
+// ========== FILE HANDLING ==========
+function setupFileUpload() {
+  const uploadZone = $('uploadZone');
+  const fileInput = $('fileInput');
+  
+  uploadZone.addEventListener('click', () => fileInput.click());
+  
+  fileInput.addEventListener('change', (e) => {
+    if (e.target.files && e.target.files[0]) {
+      handleFile(e.target.files[0]);
+    }
+  });
+  
+  uploadZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    uploadZone.classList.add('over');
+  });
+  
+  uploadZone.addEventListener('dragleave', () => {
+    uploadZone.classList.remove('over');
+  });
+  
+  uploadZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadZone.classList.remove('over');
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleFile(e.dataTransfer.files[0]);
+    }
+  });
+}
+
+function handleFile(file) {
+  if (!file) return;
+  
+  if (!file.type.startsWith('image/')) {
+    toast('يرجى رفع صورة فقط (JPG, PNG, WEBP)', 'err');
+    return;
+  }
+  
+  if (file.size > 10 * 1024 * 1024) {
+    toast('الصورة أكبر من 10MB', 'err');
+    return;
+  }
+  
+  currentFile = file;
+  
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    $('previewImg').src = e.target.result;
+    $('fileName').textContent = file.name.length > 30 ? file.name.slice(0, 27) + '...' : file.name;
+    
+    hide('uploadZone');
+    show('previewWrap');
+    show('genderPanel');
+    $('btnProcess').disabled = false;
+    
+    setStep(1, 'done');
+    setStep(2, 'active');
+    
+    toast('✅ تم رفع الصورة بنجاح', 'ok');
+  };
+  reader.readAsDataURL(file);
+}
+
+// ========== UI STEPS ==========
+function setStep(stepNum, state) {
+  const step = $('s' + stepNum);
+  if (!step) return;
+  
+  step.classList.remove('active', 'done');
+  if (state === 'active') {
+    step.classList.add('active');
+  } else if (state === 'done') {
+    step.classList.add('done');
+    const circle = step.querySelector('.step-circle');
+    if (circle) circle.textContent = '✓';
+  }
+}
+
+function setProgressItem(id, state) {
+  const item = $(id);
+  if (!item) return;
+  item.classList.remove('active', 'done', 'error-state');
+  if (state === 'active') item.classList.add('active');
+  else if (state === 'done') item.classList.add('done');
+  else if (state === 'error') item.classList.add('error-state');
+}
+
+function resetProgress() {
+  ['pi-bg', 'pi-ai', 'pi-fin'].forEach(id => setProgressItem(id, ''));
+  ['pe-bg', 'pe-ai', 'pe-fin'].forEach(id => { if($(id)) $(id).textContent = ''; });
+}
+
+function startTimer(progId) {
+  const elapsedId = progId.replace('pi-', 'pe-');
+  const startTime = Date.now();
+  timers[progId] = setInterval(() => {
+    const seconds = Math.floor((Date.now() - startTime) / 1000);
+    if ($(elapsedId)) $(elapsedId).textContent = seconds + 'ث';
+  }, 500);
+}
+
+function stopTimer(progId) {
+  if (timers[progId]) {
+    clearInterval(timers[progId]);
+    delete timers[progId];
+  }
+}
+
+function stopAllTimers() {
+  Object.keys(timers).forEach(k => clearInterval(timers[k]));
+  timers = {};
+}
+
+// ========== GENDER ==========
+window.selectGender = function(gender) {
+  currentGender = gender;
+  const maleBtn = $('gMale');
+  const femaleBtn = $('gFemale');
+  if (maleBtn) maleBtn.classList.toggle('selected', gender === 'male');
+  if (femaleBtn) femaleBtn.classList.toggle('selected', gender === 'female');
+};
+
+// ========== IMAGE PROCESSING ==========
+function fileToDataUrl(file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => resolve(e.target.result);
+    reader.readAsDataURL(file);
+  });
+}
+
+function blobToDataUrl(blob) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => resolve(e.target.result);
+    reader.readAsDataURL(blob);
+  });
+}
+
+function addWhiteBackground(dataUrl) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+      resolve(canvas.toDataURL('image/jpeg', 0.95));
+    };
+    img.src = dataUrl;
+  });
+}
+
+function resizeImage(dataUrl, maxDim = 768) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      let width = img.width;
+      let height = img.height;
+      
+      if (width > maxDim || height > maxDim) {
+        if (width >= height) {
+          height = Math.round(height * maxDim / width);
+          width = maxDim;
+        } else {
+          width = Math.round(width * maxDim / height);
+          height = maxDim;
+        }
+      }
+      
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+      resolve(canvas.toDataURL('image/jpeg', 0.9));
+    };
+    img.src = dataUrl;
+  });
+}
+
+// ========== GEMINI API ==========
+async function callGemini(imageDataUrl, gender) {
+  const geminiKey = config.geminiKey || BUILTIN_GEMINI_KEY;
+  if (!geminiKey || !geminiKey.startsWith('AIza')) {
+    throw new Error('Gemini key required');
+  }
+  
+  const base64 = imageDataUrl.split(',')[1];
+  const mimeType = imageDataUrl.split(';')[0].split(':')[1];
+  const prompt = PROMPTS[gender];
+  
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${geminiKey}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{
+          role: 'user',
+          parts: [
+            { inline_data: { mime_type: mimeType, data: base64 } },
+            { text: prompt }
+          ]
+        }],
+        generationConfig: { response_modalities: ['image', 'text'] }
+      })
+    }
+  );
+  
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.error?.message || `Gemini error: ${response.status}`);
+  }
+  
+  const data = await response.json();
+  const imagePart = data.candidates?.[0]?.content?.parts?.find(p => p.inline_data);
+  
+  if (!imagePart) {
+    throw new Error('No image generated by Gemini');
+  }
+  
+  return `data:${imagePart.inline_data.mime_type};base64,${imagePart.inline_data.data}`;
+}
+
+// ========== REPLICATE API ==========
+async function callReplicate(imageDataUrl) {
+  const apiKey = BUILTIN_API_KEY;
+  const modelKey = config.model || 'sdxl';
+  const version = MODEL_VERSIONS[modelKey] || MODEL_VERSIONS.sdxl;
+  const strength = parseFloat(config.strength || 0.75);
+  const steps = parseInt(config.steps || 30);
+  const prompt = PROMPTS[currentGender];
+  
+  const response = await fetch('https://api.replicate.com/v1/predictions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Token ${apiKey}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'wait'
+    },
+    body: JSON.stringify({
+      version: version,
+      input: {
+        image: imageDataUrl,
+        prompt: prompt,
+        negative_prompt: NEG_PROMPT,
+        prompt_strength: strength,
+        num_inference_steps: steps,
+        guidance_scale: 7.5,
+        width: 768,
+        height: 1024,
+        scheduler: 'DPMSolverMultistep'
+      }
+    })
+  });
+  
+  if (!response.ok) {
+    throw new Error(`Replicate API error: ${response.status}`);
+  }
+  
+  const prediction = await response.json();
+  
+  if (prediction.status === 'succeeded') {
+    const output = prediction.output;
+    return Array.isArray(output) ? output[0] : output;
+  }
+  
+  // Poll for result
+  for (let i = 0; i < 60; i++) {
+    await new Promise(r => setTimeout(r, 3000));
+    const statusRes = await fetch(`https://api.replicate.com/v1/predictions/${prediction.id}`, {
+      headers: { 'Authorization': `Token ${apiKey}` }
+    });
+    const statusData = await statusRes.json();
+    
+    if (statusData.status === 'succeeded') {
+      const output = statusData.output;
+      return Array.isArray(output) ? output[0] : output;
+    }
+    if (statusData.status === 'failed') {
+      throw new Error(statusData.error || 'AI processing failed');
+    }
+  }
+  
+  throw new Error('Timeout waiting for AI processing');
+}
+
+// ========== MAIN PROCESS ==========
+window.App = {
+  start: async function() {
+    if (!currentFile) {
+      toast('الرجاء اختيار صورة أولاً', 'err');
+      return;
+    }
+    
+    hide('btnProcess');
+    hide('genderPanel');
+    hide('previewWrap');
+    show('progressSec');
+    resetProgress();
+    
+    try {
+      // Step 1: Remove background
+      setProgressItem('pi-bg', 'active');
+      startTimer('pi-bg');
+      
+      let bgRemoved;
+      try {
+        bgRemoved = await removeBackground(currentFile, {
+          publicPath: IMGLY_CDN,
+          debug: false
+        });
+      } catch(e) {
+        throw new Error('فشل إزالة الخلفية: ' + e.message);
+      }
+      
+      stopTimer('pi-bg');
+      setProgressItem('pi-bg', 'done');
+      
+      // Add white background
+      const noBgUrl = await blobToDataUrl(bgRemoved);
+      const whiteBg = await addWhiteBackground(noBgUrl);
+      const resized = await resizeImage(whiteBg, 768);
+      
+      setStep(2, 'done');
+      setStep(3, 'active');
+      
+      // Step 2: AI transformation
+      setProgressItem('pi-ai', 'active');
+      startTimer('pi-ai');
+      
+      let aiResult;
+      try {
+        // Try Gemini first if available
+        if (config.geminiKey && config.geminiKey.startsWith('AIza')) {
+          aiResult = await callGemini(resized, currentGender);
+        } else {
+          aiResult = await callReplicate(resized);
+        }
+      } catch(e) {
+        console.warn('Primary AI failed, trying Replicate:', e);
+        aiResult = await callReplicate(resized);
+      }
+      
+      stopTimer('pi-ai');
+      setProgressItem('pi-ai', 'done');
+      setStep(3, 'done');
+      setStep(4, 'active');
+      
+      // Step 3: Finalize
+      setProgressItem('pi-fin', 'active');
+      resultImage = aiResult;
+      $('origImg').src = $('previewImg').src;
+      $('resultImg').src = aiResult;
+      setProgressItem('pi-fin', 'done');
+      setStep(4, 'done');
+      
+      hide('progressSec');
+      show('resultSec');
+      
+      // Save to history
+      const history = JSON.parse(localStorage.getItem(LS_HISTORY) || '[]');
+      history.unshift({ url: aiResult, gender: currentGender, date: new Date().toLocaleDateString('ar-IQ') });
+      localStorage.setItem(LS_HISTORY, JSON.stringify(history.slice(0, 12)));
+      renderHistory();
+      
+      toast('✅ تمت المعالجة بنجاح!', 'ok');
+      $('resultSec').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      
+    } catch(error) {
+      console.error(error);
+      stopAllTimers();
+      ['pi-bg', 'pi-ai', 'pi-fin'].forEach(id => {
+        if ($(id) && $(id).classList.contains('active')) {
+          setProgressItem(id, 'error');
+        }
+      });
+      toast('❌ ' + error.message, 'err');
+      
+      setTimeout(() => {
+        hide('progressSec');
+        $('btnProcess').style.display = 'flex';
+        show('genderPanel');
+        show('previewWrap');
+        $('btnProcess').disabled = false;
+      }, 3000);
+    }
+  },
+  
+  download: async function() {
+    if (!resultImage) return;
+    try {
+      const response = await fetch(resultImage);
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `formal-photo-${Date.now()}.jpg`;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+      toast('جاري التحميل...', 'ok');
+    } catch {
+      window.open(resultImage, '_blank');
+    }
+  },
+  
+  reset: function() {
+    currentFile = null;
+    resultImage = null;
+    hide('previewWrap');
+    hide('genderPanel');
+    hide('resultSec');
+    show('uploadZone');
+    $('btnProcess').disabled = true;
+    $('btnProcess').style.display = 'flex';
+    $('fileInput').value = '';
+    
+    for (let i = 1; i <= 4; i++) {
+      const step = $('s' + i);
+      if (step) {
+        step.classList.remove('active', 'done');
+        const circle = step.querySelector('.step-circle');
+        if (circle) circle.textContent = i;
+      }
+    }
+    $('s1').classList.add('active');
+  },
+  
+  gender: function(gender) {
+    currentGender = gender;
+    const maleBtn = $('gMale');
+    const femaleBtn = $('gFemale');
+    if (maleBtn) maleBtn.classList.toggle('selected', gender === 'male');
+    if (femaleBtn) femaleBtn.classList.toggle('selected', gender === 'female');
+  },
+  
+  changeImage: function() {
+    this.reset();
+  },
+  
+  openSettings: function() {
+    applyConfigToForm();
+    $('settingsOverlay').classList.add('open');
+  },
+  
+  closeSettings: function() {
+    $('settingsOverlay').classList.remove('open');
+  },
+  
+  overlayClick: function(e) {
+    if (e.target.id === 'settingsOverlay') this.closeSettings();
+  },
+  
+  saveSettings: saveConfig,
+  
+  clearHistory: function() {
+    if (confirm('هل تريد مسح سجل الصور المعالجة؟')) {
+      localStorage.removeItem(LS_HISTORY);
+      renderHistory();
+      toast('تم مسح السجل', 'ok');
+    }
+  }
+};
+
+// ========== HISTORY ==========
+function renderHistory() {
+  try {
+    const history = JSON.parse(localStorage.getItem(LS_HISTORY) || '[]');
+    const wrap = $('historyWrap');
+    const grid = $('historyGrid');
+    
+    if (!history.length) {
+      if (wrap) wrap.style.display = 'none';
+      return;
+    }
+    
+    if (wrap) wrap.style.display = 'block';
+    if (grid) {
+      grid.innerHTML = history.map((item, i) => `
+        <div class="hist-item" onclick="window.open('${item.url}', '_blank')">
+          <img src="${item.url}" alt="history ${i+1}" loading="lazy">
+          <div class="hist-meta">${item.date || ''} · ${item.gender === 'male' ? '👔' : '🧕'}</div>
+        </div>
+      `).join('');
+    }
+  } catch(e) {}
+}
+
+// ========== INIT ==========
+function init() {
+  loadConfig();
+  setupFileUpload();
+  renderHistory();
+  window.selectGender('male');
+}
+
+init();
+
+</script>
+</body>
+</html>
